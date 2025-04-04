@@ -84,17 +84,18 @@
   .detections-list {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 30px;
     width: 100%;
     margin-bottom: 50px;
 
     .detection-item {
+      width: calc(100% / 3 - 20px);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      align-items: center;
+      gap: 30px;
       padding: 20px;
       border-radius: 30px;
-      background-color: #f9f9f9;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease-in-out;
 
@@ -102,11 +103,16 @@
         transform: scale(1.02);
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
       }
+      .detection-icon {
+        svg {
+          width: 50px;
+          height: 50px;
+          color: #222;
+        }
+      }
 
-      svg {
-        width: 50px;
-        height: 50px;
-        color: #222;
+      span {
+        position: absolute;
       }
     }
   }

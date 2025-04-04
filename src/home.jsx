@@ -45,8 +45,8 @@ export const App = () => {
           <div className="detections-list">
             {detections.map((detection, index) => (
               <div key={index} className="detection-item">
-                <HeartBeat />
                 <div className="detection-icon">{<detection.icon />}</div>
+                <HeartBeat />
                 <div className="detection-type">{detection.type}</div>
                 <span></span>
                 <span></span>

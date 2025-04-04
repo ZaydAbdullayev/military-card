@@ -7,10 +7,10 @@ export const HeartBeat = () => {
       <svg
         viewBox="0 0 2000 100"
         preserveAspectRatio="none"
-        class="heartbeat-svg"
+        className="heartbeat-svg"
       >
         <path
-          class="heartbeat-path"
+          className="heartbeat-path"
           d="
         M0,50 
         L100,50 

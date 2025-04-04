@@ -1,13 +1,24 @@
-import example1 from '../assets/example-1.jpg'
-import example2 from '../assets/example-2.jpg'
-import example3 from '../assets/example-3.jpg'
 
-export const examples = [
-    { videoId: 'Rs3t326SyY4', type: 'video', img: '' },
-    { videoId: '', type: 'img', img: example1 },
-    { videoId: '7bThTTac6Hk', type: 'video', img: '' },
-    { videoId: '', type: 'img', img: example2 },
-    { videoId: 'wW70p9o64_o', type: 'video', img: '' },
-    { videoId: 'o3LqFpCCn0g', type: 'video', img: '' },
-    { videoId: '', type: 'img', img: example3 },
-]
+export const ranks = [
+    { title: "Private", grade: "E-1" },
+    { title: "Private First Class", grade: "E-2" },
+    { title: "Corporal", grade: "E-4" },
+    { title: "Sergeant", grade: "E-5" },
+    { title: "Staff Sergeant", grade: "E-6" },
+    { title: "Sergeant First Class", grade: "E-7" },
+    { title: "Master Sergeant", grade: "E-8" },
+    { title: "First Sergeant", grade: "E-8" },
+    { title: "Sergeant Major", grade: "E-9" },
+    { title: "Warrant Officer", grade: "W-1" },
+    { title: "Chief Warrant Officer", grade: "W-2" },
+    { title: "Second Lieutenant", grade: "O-1" },
+    { title: "First Lieutenant", grade: "O-2" },
+    { title: "Captain", grade: "O-3" },
+    { title: "Major", grade: "O-4" },
+    { title: "Lieutenant Colonel", grade: "O-5" },
+    { title: "Colonel", grade: "O-6" },
+    { title: "Brigadier General", grade: "O-7" },
+    { title: "Major General", grade: "O-8" },
+    { title: "Lieutenant General", grade: "O-9" },
+    { title: "General", grade: "O-10" },
+];

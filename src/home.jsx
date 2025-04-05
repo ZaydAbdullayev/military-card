@@ -23,7 +23,7 @@ import {
   getRandomRozetClass,
   saveCardAsImage,
 } from "./context/service";
-import military_logo from "./assets/logo2.png";
+import military_logo from "./assets/logo.jpg";
 import chip from "./assets/chip.webp";
 import { BiLoaderCircle } from "react-icons/bi";
 import { PDF417Canvas } from "./components/qr";

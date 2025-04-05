@@ -2,19 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import "./home.css";
 import "./military-card.css";
 import "./components/index.scss";
-import { HeartBeat } from "./components/bg";
-import {
-  GiClaymoreExplosive,
-  GiMedicines,
-  GiPistolGun,
-  GiBombingRun,
-} from "react-icons/gi";
-import { FaTelegramPlane } from "react-icons/fa";
 import { FaHelmetUn } from "react-icons/fa6";
 import { RiTwitterXLine } from "react-icons/ri";
 import { TbUserSquare } from "react-icons/tb";
 import logo from "./assets/logo2.png";
-import troop from "./assets/troop.png";
 import roset from "./assets/rozet.png";
 import {
   formatMilitaryDate,
@@ -124,6 +115,13 @@ export const App = () => {
     const formData = new FormData(formEl);
     const value = Object.fromEntries(formData.entries());
 
+    if (!value.fullname || !value.birthday) return;
+    if (!photo) return alert("Please take a photo");
+    if (!canvasRef.current.toDataURL("image/png")) {
+      return alert("Please take a signature");
+    }
+    if (!value.nickname) value.nickname = "No nickname";
+
     // Rastgele ID ve rütbe üret
     const randomID = generateRandomID();
     const selectedRank = getRandomRank();
@@ -205,29 +203,17 @@ You’ve officially enlisted in the Trenches Armed Forces — there’s no turni
             now.
           </h3>
           <div className="btns">
-            <button>
-              Telegram <FaTelegramPlane />
-            </button>
-            <button>
+            <button
+              onClick={() =>
+                window.open(" https://x.com/trenches_forces", "_blank")
+              }
+            >
               <RiTwitterXLine />
             </button>
-          </div>
-        </div>
-
-        <div className="join-forces">
-          <img src={troop} alt="Troop" className="troop-image" />
-          <h2>Join the Forces</h2>
-          <p>Be part of something bigger.</p>
-          <p>We are looking for dedicated individuals.</p>
-          <p>Apply now and make a difference.</p>
-          <button className="apply-button" onClick={() => setApplyNow(true)}>
-            Apply Now
-          </button>
-          {militaryCard?.military_id && (
-            <button onClick={shareOnX}>
-              🚀 Share on X {sending && <BiLoaderCircle className="loader" />}
+            <button className="apply-button" onClick={() => setApplyNow(true)}>
+              Apply Now
             </button>
-          )}
+          </div>
         </div>
 
         {(applyNow || militaryCard?.loading) && (
@@ -289,7 +275,9 @@ You’ve officially enlisted in the Trenches Armed Forces — there’s no turni
             </div>
           </div>
         )}
-        <div className="military-card">
+        <div
+          className={`military-card ${militaryCard?.military_id ? "blur" : ""}`}
+        >
           {openForm && (
             <form
               className="form-container"
@@ -422,8 +410,11 @@ You’ve officially enlisted in the Trenches Armed Forces — there’s no turni
           )}
           {militaryCard?.military_id && (
             <div className="actions">
-              <button onClick={downloadCard}>Download to Galery</button>
               <button onClick={reset}>Reset</button>
+              <button onClick={downloadCard}>Download to Galery</button>
+              <button onClick={shareOnX}>
+                🚀 Share on X {sending && <BiLoaderCircle className="loader" />}
+              </button>
             </div>
           )}
         </div>

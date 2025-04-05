@@ -1,6 +1,6 @@
 .military-card_container {
-  width: 420px;
-  height: 630px;
+  width: 420px !important;
+  height: 630px !important;
   background: #fff;
   color: #111;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -117,7 +117,7 @@
     width: 100%;
     position: relative;
     display: flex;
-    padding: 20px 0;
+    padding: 15px 0 5px;
 
     figure {
       height: 100%;

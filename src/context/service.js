@@ -29,6 +29,28 @@ export const formatMilitaryDate = (isoString) => {
     return `${year} ${months[month]} ${day}`;
 };
 
+export const getCardAsImageData = async (cardEl) => {
+    const canvas = await html2canvas(cardEl, {
+        backgroundColor: null,
+        useCORS: true,
+        scale: 2,
+    });
+    return canvas.toDataURL("image/png"); // base64 string döner
+};
+
+export const uploadToImgbb = async (base64Data) => {
+    const form = new FormData();
+    form.append("image", base64Data.split(",")[1]);
+
+    const response = await fetch("https://api.imgbb.com/1/upload?key=0c6e7cd171cc73ee4e6dfcfaf2cc0bd9", {
+        method: "POST",
+        body: form,
+    });
+
+    const data = await response.json();
+    return data.data?.url; // işte bu senin paylaşılabilir linkin
+};
+
 
 export const saveCardAsImage = async (cardElement) => {
 

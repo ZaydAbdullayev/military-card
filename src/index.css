@@ -10,7 +10,7 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: #111;
+  color: #fff;
   background-color: #fff;
   letter-spacing: 0.05rem;
 
@@ -39,5 +39,3 @@ button {
   cursor: pointer;
   font: inherit;
 }
-
-

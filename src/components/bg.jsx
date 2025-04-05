@@ -1,5 +1,5 @@
 import "./index.scss";
-import bg from "../assets/bg.png";
+import bg from "../assets/bg.jpg";
 
 export const HeartBeat = () => {
   return (

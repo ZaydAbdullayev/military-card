@@ -13,34 +13,29 @@ import { FaTelegramPlane } from "react-icons/fa";
 import { FaHelmetUn } from "react-icons/fa6";
 import { RiTwitterXLine } from "react-icons/ri";
 import { TbUserSquare } from "react-icons/tb";
-import logo from "./assets/logo.png";
+import logo from "./assets/logo2.png";
 import troop from "./assets/troop.png";
 import roset from "./assets/rozet.png";
 import {
   formatMilitaryDate,
   generateRandomID,
+  getCardAsImageData,
   getRandomRank,
   getRandomRozetClass,
   saveCardAsImage,
+  uploadToImgbb,
 } from "./context/service";
-import military_logo from "./assets/logo.jpg";
 import chip from "./assets/chip.webp";
 import { BiLoaderCircle } from "react-icons/bi";
 import { PDF417Canvas } from "./components/qr";
 import stamp from "./assets/stamp2.png";
-
-const detections = [
-  { type: "explosive", icon: GiClaymoreExplosive },
-  { type: "drugs", icon: GiMedicines },
-  { type: "weapons", icon: GiPistolGun },
-  { type: "contraband", icon: GiBombingRun },
-];
 
 export const App = () => {
   const [applyNow, setApplyNow] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [militaryCard, setMilitaryCard] = useState(null);
+  const [sending, setSending] = useState(false);
 
   const canvasRef = useRef(null);
   const [drawing, setDrawing] = useState(false);
@@ -178,18 +173,37 @@ REGION: ${cardData.location}
     saveCardAsImage(cardElement);
   };
 
+  const shareOnX = async () => {
+    if (!militaryCard?.military_id) return;
+    setSending(true);
+    const cardEl = document.querySelector(".military-card_container");
+    const imgUrl = await uploadToImgbb(await getCardAsImageData(cardEl));
+    console.log(imgUrl);
+
+    const tweetText = `🎖️ Welcome to the trenche force, soldier.
+You’ve officially enlisted in the Trenches Armed Forces — there’s no turning back.`;
+    const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      tweetText
+    )}&url=${encodeURIComponent(imgUrl)}`;
+    window.open(tweetUrl, "_blank");
+    setSending(false);
+  };
+
   return (
     <div className="wrapper">
       <div className="home-container">
         <div className="info">
           <img src={logo} alt="Logo" className="logo" />
-          <h1>National Security Forces</h1>
-          <h2>Welcome to the National Security Forces</h2>
-          <span>Your safety is our priority.</span>
-          <p>Join us in our mission to protect and serve.</p>
-          <p>
-            We are committed to ensuring the safety and security of our nation.
-          </p>
+          <h1>National Trenches Forces </h1>
+          <h2>Are you a Dip Sniper or a Moon Commander?</h2>
+          <span>
+            A Scout for hidden gems, or a Rugpull Survivor still standing
+            strong?
+          </span>
+          <h3>
+            Whatever your rank, one thing’s for sure — you’re in the trenches
+            now.
+          </h3>
           <div className="btns">
             <button>
               Telegram <FaTelegramPlane />
@@ -197,22 +211,6 @@ REGION: ${cardData.location}
             <button>
               <RiTwitterXLine />
             </button>
-          </div>
-        </div>
-        <div className="detections">
-          <h2>Detection Alerts</h2>
-          <div className="detections-list">
-            {detections.map((detection, index) => (
-              <div key={index} className="detection-item">
-                <div className="detection-icon">{<detection.icon />}</div>
-                <HeartBeat />
-                <div className="detection-type">
-                  {detection.type} Particles Detection
-                </div>
-                <span></span>
-                <span></span>
-              </div>
-            ))}
           </div>
         </div>
 
@@ -225,6 +223,11 @@ REGION: ${cardData.location}
           <button className="apply-button" onClick={() => setApplyNow(true)}>
             Apply Now
           </button>
+          {militaryCard?.military_id && (
+            <button onClick={shareOnX}>
+              🚀 Share on X {sending && <BiLoaderCircle className="loader" />}
+            </button>
+          )}
         </div>
 
         {(applyNow || militaryCard?.loading) && (
@@ -233,39 +236,56 @@ REGION: ${cardData.location}
             <h1>
               <FaHelmetUn /> CONSTITUTION OF DUTY & LOYALTY
             </h1>
+            <h2
+              style={{
+                textAlign: "center",
+                marginBottom: "20px",
+                color: "#ccc",
+              }}
+            >
+              National Trenches Forces | Codex of the Chain
+            </h2>
             <p>
-              1. I shall protect with honor the unity, sovereignty, and dignity
-              of our command at all costs.
+              1. I shall protect with honor the integrity, decentralization, and
+              vision of the crypto frontier — no matter the cost.
             </p>
             <p>
-              2. I swear unwavering loyalty to my comrades, my mission, and the
-              higher order I serve.
+              2. I swear unwavering loyalty to my fellow trench soldiers, the
+              mission we fight for, and the freedom of the open ledger.
             </p>
             <p>
-              3. I shall remain silent and resolute in the face of fear, doubt,
-              or betrayal.
+              3. I shall remain calm and calculated in the face of FOMO, FUD, or
+              rug.
             </p>
             <p>
-              4. I will never disclose confidential operations, identities, or
-              internal affairs.
+              4. I will never leak alpha, expose ops, or compromise the
+              brotherhood of the chain.
             </p>
             <p>
-              5. I shall act with discipline, responsibility, and strategic
-              precision in every action taken.
+              5. I shall operate with discipline, risk-awareness, and
+              gas-efficient precision in every transaction.
             </p>
             <p>
-              6. I pledge to uphold truth, even when surrounded by deception,
-              and to resist corruption at all times.
+              6. I pledge to seek truth through on-chain signals, resist
+              manipulation, and never bow to centralized control.
             </p>
             <p>
-              7. I serve not for glory, but for duty — until relieved or fallen.
+              7. I serve not for fame or fortune — but for the cause. Until I
+              hit 0 or touch moon.
             </p>
             <div className="accept-box">
               <label htmlFor="accept">
                 {" "}
                 <input type="checkbox" id="accept" />I accept the terms
               </label>
-              <button onClick={() => setOpenForm(true)}>Open to Card</button>
+              <button
+                onClick={() => {
+                  setOpenForm(true);
+                  setApplyNow(false);
+                }}
+              >
+                Open to Card
+              </button>
             </div>
           </div>
         )}
@@ -342,7 +362,7 @@ REGION: ${cardData.location}
                 </figure>
                 <figure className="military-info">
                   <h3>Armed Forces of the National Security</h3>
-                  <img src={military_logo} alt="Logo" className="logo2" />
+                  <img src={logo} alt="Logo" className="logo2" />
                   <p>
                     Army <span>ACTIVE DUTY</span>
                   </p>
@@ -402,7 +422,6 @@ REGION: ${cardData.location}
           )}
           {militaryCard?.military_id && (
             <div className="actions">
-              <button>Share from X</button>
               <button onClick={downloadCard}>Download to Galery</button>
               <button onClick={reset}>Reset</button>
             </div>

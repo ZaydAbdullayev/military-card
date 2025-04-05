@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import "./home.css";
+import "./military-card.css";
 import "./components/index.scss";
 import { HeartBeat } from "./components/bg";
 import {
@@ -15,7 +16,18 @@ import { TbUserSquare } from "react-icons/tb";
 import logo from "./assets/logo.png";
 import troop from "./assets/troop.png";
 import roset from "./assets/rozet.png";
-import { generateRandomID, getRandomRank } from "./context/service";
+import {
+  formatMilitaryDate,
+  generateRandomID,
+  getRandomRank,
+  getRandomRozetClass,
+  saveCardAsImage,
+} from "./context/service";
+import military_logo from "./assets/logo2.png";
+import chip from "./assets/chip.webp";
+import { BiLoaderCircle } from "react-icons/bi";
+import { PDF417Canvas } from "./components/qr";
+import stamp from "./assets/stamp2.png";
 
 const detections = [
   { type: "explosive", icon: GiClaymoreExplosive },
@@ -27,7 +39,6 @@ const detections = [
 export const App = () => {
   const [applyNow, setApplyNow] = useState(false);
   const [openForm, setOpenForm] = useState(false);
-  const [signature, setSignature] = useState(null);
   const [photo, setPhoto] = useState(null);
   const [militaryCard, setMilitaryCard] = useState(null);
 
@@ -83,10 +94,8 @@ export const App = () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#fff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    setSignature(null);
   };
 
-  const sigRef = useRef();
   const takePhotoLink = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -95,7 +104,27 @@ export const App = () => {
     };
   };
 
-  const generate_card = () => {
+  const getUserLocationByIP = async () => {
+    try {
+      const response = await fetch("https://ipapi.co/json/");
+      const data = await response.json();
+      const location = {
+        city: data.city,
+        region: data.region,
+        country: data.country_name,
+        latitude: data.latitude,
+        longitude: data.longitude,
+        ip: data.ip,
+      };
+      return location;
+    } catch (error) {
+      console.error("Konum alınamadı ❌", error);
+      return null;
+    }
+  };
+
+  const generate_card = async () => {
+    setMilitaryCard({ loading: true });
     const formEl = document.querySelector(".form-container");
     const formData = new FormData(formEl);
     const value = Object.fromEntries(formData.entries());
@@ -103,6 +132,11 @@ export const App = () => {
     // Rastgele ID ve rütbe üret
     const randomID = generateRandomID();
     const selectedRank = getRandomRank();
+    const location = await getUserLocationByIP();
+    const issued_at = formatMilitaryDate(new Date().toISOString());
+    const expires_at = formatMilitaryDate(
+      new Date(Date.now() + 3650 * 24 * 60 * 60 * 1000).toISOString()
+    );
 
     // imzayı doğrudan canvasRef'ten al
     const signatureData = canvasRef.current.toDataURL("image/png");
@@ -114,9 +148,34 @@ export const App = () => {
       pay_grade: selectedRank.grade,
       signature: signatureData || null,
       photo: photo || null,
+      location: location || null,
+      issued_at,
+      expires_at,
     };
 
-    console.log("✅ Kart Bilgisi:", cardData);
+    const barcodeText = `
+MILITARY ID: ${cardData.military_id}
+NAME: ${cardData.fullname}
+RANK: ${cardData.rank} (${cardData.pay_grade})
+BIRTH: ${cardData.birthday}
+REGION: ${cardData.location}
+`.trim();
+    cardData.pdf417 = barcodeText;
+
+    setMilitaryCard(cardData);
+    setOpenForm(false);
+    formEl.reset();
+  };
+
+  const reset = () => {
+    setMilitaryCard({});
+    setOpenForm(true);
+    setPhoto(null);
+  };
+
+  const downloadCard = async () => {
+    const cardElement = document.querySelector(".military-card_container");
+    saveCardAsImage(cardElement);
   };
 
   return (
@@ -168,7 +227,7 @@ export const App = () => {
           </button>
         </div>
 
-        {applyNow && (
+        {(applyNow || militaryCard?.loading) && (
           <div className="contitution">
             <img src={roset} alt="Troop" className="roset" />
             <h1>
@@ -210,8 +269,8 @@ export const App = () => {
             </div>
           </div>
         )}
-        {openForm && (
-          <div className="military-card">
+        <div className="military-card">
+          {openForm && (
             <form
               className="form-container"
               onSubmit={(e) => e.preventDefault()}
@@ -268,10 +327,87 @@ export const App = () => {
                   Clear
                 </button>
               </div>
-              <button onClick={generate_card}>Take Military Card</button>
+              <button onClick={generate_card}>
+                Take Military Card{" "}
+                {militaryCard?.loading && <BiLoaderCircle className="loader" />}
+              </button>
             </form>
-          </div>
-        )}
+          )}
+          {militaryCard?.military_id && (
+            <div className="military-card_container">
+              <div className="first-section">
+                <figure className="user-photo">
+                  <img src={militaryCard?.photo} alt="User" />
+                  <p>Name: {militaryCard?.fullname}</p>
+                </figure>
+                <figure className="military-info">
+                  <h3>Armed Forces of the National Security</h3>
+                  <img src={military_logo} alt="Logo" className="logo2" />
+                  <p>
+                    Army <span>ACTIVE DUTY</span>
+                  </p>
+                </figure>
+              </div>
+              <div className="user-info">
+                <p>
+                  DPO: <span>{militaryCard?.birthday}</span>
+                </p>
+                <p>
+                  Origin:{" "}
+                  <span>
+                    {militaryCard?.location?.city},
+                    {militaryCard?.location?.country}
+                  </span>
+                </p>
+              </div>
+              <div className="second-section">
+                <PDF417Canvas value={militaryCard?.pdf417} />
+                <div className="military-info-details">
+                  <label>
+                    <p>
+                      Rank: <span>{militaryCard?.rank}</span>
+                    </p>
+                    <p>
+                      Pay Grade:{" "}
+                      <span>
+                        {militaryCard?.pay_grade} | {militaryCard?.military_id}
+                      </span>
+                    </p>
+                  </label>
+                  <div>
+                    <div className="rozets-wrapper">
+                      <div className={`rozet ${getRandomRozetClass()}`} />
+                    </div>
+                    <figure>
+                      <label className="signature">
+                        <span>Signature:</span>
+                        <img src={militaryCard?.signature} alt="signature" />
+                      </label>
+                      <img src={chip} alt="chip" className="chip" />
+                    </figure>
+                    <div className="date-info">
+                      <p>
+                        Issued Date: <span>{militaryCard?.issued_at}</span>
+                      </p>
+                      <p>
+                        Expires Date: <span>{militaryCard?.expires_at}</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <p>Armed Forces Indentification Card</p>
+              <img src={stamp} alt="stamp" className="stamp" />
+            </div>
+          )}
+          {militaryCard?.military_id && (
+            <div className="actions">
+              <button>Share from X</button>
+              <button onClick={downloadCard}>Download to Galery</button>
+              <button onClick={reset}>Reset</button>
+            </div>
+          )}
+        </div>
       </div>
       <footer className="home-footer">
         <p>© 2025 Your Company. All rights reserved.</p>

@@ -54,7 +54,8 @@
 .btns button,
 .join-forces button,
 .accept-box button,
-.signature-wrapper button {
+.signature-wrapper button,
+.actions button {
   height: 40px;
   padding: 0px 30px;
   display: flex;
@@ -320,6 +321,10 @@
   > button {
     width: 80%;
     height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
     border: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.652);
     background: #333;
@@ -329,6 +334,70 @@
     &:active {
       transform: scale(0.95);
     }
+  }
+}
+
+.loader {
+  font-size: 20px;
+  animation: loading 1s linear infinite;
+}
+
+@keyframes loading {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.rozets-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 200px);
+  gap: 10px;
+  position: absolute;
+  left: 30px;
+  top: -10px;
+  opacity: 0.4;
+
+  .rozet {
+    width: 200px;
+    height: 200px;
+    background-image: url("./assets/sembole.png");
+    background-size: 600px 600px;
+    background-repeat: no-repeat;
+    transform: scale(1.1);
+  }
+
+  .r1 {
+    background-position: 0px 0px;
+  }
+  .r2 {
+    background-position: -200px 0px;
+  }
+  .r3 {
+    background-position: -400px 0px;
+  }
+
+  .r4 {
+    background-position: 0px -200px;
+  }
+  .r5 {
+    background-position: -200px -200px;
+  }
+  .r6 {
+    background-position: -400px -200px;
+  }
+
+  .r7 {
+    background-position: 0px -400px;
+  }
+  .r8 {
+    background-position: -200px -400px;
+  }
+  .r9 {
+    background-position: -400px -400px;
   }
 }
 

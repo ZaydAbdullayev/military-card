@@ -12,11 +12,15 @@ export const App = () => {
       <div className="home-container">
         <div className="info">
           <img src={logo} alt="Logo" className="logo" />
-          <h1>National Trenches Forces</h1>
-          <h2>Are you a Dip Sniper or a Moon Commander?</h2>
+          <h1>United Trenches Army</h1>
+          <h2>
+            Join the Trenches, where every soldier counts in the fight against
+            rugpulls.
+          </h2>
           <span>
-            A Scout for hidden gems, or a Rugpull Survivor still standing
-            strong?
+            The Trenches is a community-driven initiative that empowers
+            soldiers to take action against rugpulls and scams in the crypto
+            space
           </span>
           <h3>
             Whatever your rank, one thing’s for sure — you’re in the trenches
@@ -25,7 +29,7 @@ export const App = () => {
           <div className="btns">
             <button
               onClick={() =>
-                window.open(" https://x.com/trenches_forces", "_blank")
+                window.open("https://x.com/ArmyTrench", "_blank")
               }
             >
               <RiTwitterXLine />
